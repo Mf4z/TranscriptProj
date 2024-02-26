@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome</title>
+</head>
+
+<body>
+    <h3>Welcome, %user_name%</h3>
+
+    <br>
+    <h2>Active Populations</h2>
+    <p>Bsc - Computer science - F2021 (%Bsc%)</p>
+    <p>Msc - Computer science - F2021 (%Msc%)</p>
+    <p>ME - AIs - F2021 (%AIs%)</p>
+    <p>Msc - AIMS - F2021 (%AIMS%)</p>
+    <p>ME - GITM - F2021 (%GITM%)</p>
+
+    <br>
+    <h2>Overall Attendance</h2>
+    <p>Bsc - Computer science - F2021 (85%)</p>
+    <p>Msc - Computer science - F2021 (90%)</p>
+    <p>ME - AIs - F2021 (95%)</p>
+    <p>Msc - AIMS - F2021 (95%)</p>
+    <p>ME - GITM - F2021 (80%)</p>
+
+    <h1>Course Information</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Enrollment</th>
+                <th>Batch</th>
+                <th>Year</th>
+                <th>Track</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for record in records %}
+            <tr>
+                <td>{{ record[0] }}</td>
+                <td>{{ record[1] }}</td>
+                <td>{{ record[2] }}</td>
+                <td>{{ record[3] }}</td>
+                <td>{{ record[4] }}</td>
+                <td>{{ record[5] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <br>
+    <p>website last generation : 10th January 2023 </p>
+</body>
+
+</html>
