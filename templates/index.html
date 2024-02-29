@@ -8,15 +8,19 @@
 </head>
 
 <body>
-    <h3>Welcome, %user_name%</h3>
+    <h3>Welcome, {{user_name}}</h3>
 
-    <br>
     <h2>Active Populations</h2>
-    <p>Bsc - Computer science - F2021 (%Bsc%)</p>
-    <p>Msc - Computer science - F2021 (%Msc%)</p>
-    <p>ME - AIs - F2021 (%AIs%)</p>
-    <p>Msc - AIMS - F2021 (%AIMS%)</p>
-    <p>ME - GITM - F2021 (%GITM%)</p>
+
+    <ul>
+        {% for program_statistic in student_population %}
+        <li> <a href="poluations.html/?course={{ program_statistic[0]}}&year={{ program_statistic[2] }}">{{
+                program_statistic[0] }} -
+                {{ program_statistic[1] }} -
+                {{ program_statistic[2] }}
+                ({{ program_statistic[3] }})</li></a>
+        {% endfor %}
+    </ul>
 
     <br>
     <h2>Overall Attendance</h2>
@@ -25,32 +29,6 @@
     <p>ME - AIs - F2021 (95%)</p>
     <p>Msc - AIMS - F2021 (95%)</p>
     <p>ME - GITM - F2021 (80%)</p>
-
-    <h1>Course Information</h1>
-    <table>
-        <thead>
-            <tr>
-                <th>Email</th>
-                <th>Contact</th>
-                <th>Enrollment</th>
-                <th>Batch</th>
-                <th>Year</th>
-                <th>Track</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for record in records %}
-            <tr>
-                <td>{{ record[0] }}</td>
-                <td>{{ record[1] }}</td>
-                <td>{{ record[2] }}</td>
-                <td>{{ record[3] }}</td>
-                <td>{{ record[4] }}</td>
-                <td>{{ record[5] }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
 
     <br>
     <p>website last generation : 10th January 2023 </p>

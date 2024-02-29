@@ -3,23 +3,47 @@ import mysql.connector
 
 app = Flask(__name__)
 
-@app.route('/')
-def index():
-    mydb = mysql.connector.connect(
+mydb = mysql.connector.connect(
         host='localhost',
         user='root',
         password='',
         database='transcript_db'
     )
 
-    mycursor = mydb.cursor()
+def executeQuery(query):
+    cursor = mydb.cursor()
+    cursor.execute(query)
 
-    mycursor.execute("SELECT * FROM students LIMIT 10")
-    records = mycursor.fetchall()
-
+    result = cursor.fetchall()
+    cursor.close()
     mydb.close()
+    return result
 
-    return render_template('index.html', records=records)
+@app.route('/')
+def index():
+    query_population = """
+    SELECT student_population_code_ref,student_population_period_ref,student_population_year_ref, count(*) AS population FROM students
+    GROUP BY student_population_code_ref,student_population_period_ref,student_population_year_ref ORDER BY student_population_code_ref"""
+
+    student_population = executeQuery(query_population)
+
+    return render_template('index.html',student_population=student_population)
+
+@app.route('/populations')
+def populations():
+    mycursor = mydb.cursor()
+    query_population = """
+    SELECT student_population_code_ref,student_population_period_ref,student_population_year_ref, count(*) AS population FROM students
+    GROUP BY student_population_code_ref,student_population_period_ref,student_population_year_ref ORDER BY student_population_code_ref"""
+
+    mycursor.execute(query_population)
+    student_population = mycursor.fetchall()
+
+
+    # mydb.close()
+
+    return render_template('populations.html',student_population=student_population)
+
 
 if __name__ == '__main__':
     app.run(debug=True)
