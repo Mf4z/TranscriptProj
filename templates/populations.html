@@ -37,12 +37,14 @@
         </tbody>
     </table>
 
-    <!-- <h3>Courses</h3>
+    <h3>Courses</h3>
     <ul>
-        {{courses}}
+        {% for course in programme_courses %}
+        <li>{{course[0]}}</li>
+        {% endfor %}
     </ul>
 
-    <p>Website last generated: {{generation_time}}</p> -->
+    <p>Website last generated: {{generation_time}}</p>
 </body>
 
 </html>

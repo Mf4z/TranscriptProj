@@ -37,13 +37,16 @@ FROM students s
 JOIN contacts c
 ON s.student_contact_ref = c.contact_email WHERE s.student_population_code_ref = '{programme}' AND s.student_population_year_ref = {year} AND s.student_population_period_ref = '{batch}'"""
 
-    query_courses = """
-    SELECT student_population_code_ref,student_population_period_ref,student_population_year_ref, count(*) AS population FROM students
-    GROUP BY student_population_code_ref,student_population_period_ref,student_population_year_ref ORDER BY student_population_code_ref"""
+    query_courses = f"""
+    SELECT c.course_name  FROM programs p
+JOIN courses c 
+ON p.program_course_code_ref  = c.course_code
+WHERE p.program_assignment = '{programme}'"""
 
     student_population = executeQuery(student_population_query)
+    programme_courses = executeQuery(query_courses)
 
-    return render_template('populations.html',student_population=student_population)
+    return render_template('populations.html',student_population=student_population,programme_courses=programme_courses)
 
 
 @app.route('/populationss/<int:year>/<batch>/<programme>')

@@ -31,7 +31,16 @@
     <p>ME - AIs - F2021 (95%)</p>
     <p>Msc - AIMS - F2021 (95%)</p>
     <p>ME - GITM - F2021 (80%)</p>
-
+    <ul>
+        {% for program_statistic in student_population %}
+        <li>{{program_statistic[0] }} -
+            {{ program_statistic[1] }} -
+            {{ program_statistic[2] }}
+            ({{ x }}%)
+            <!-- ({{ program_statistic[3] }}%) -->
+        </li>
+        {% endfor %}
+    </ul>
     <br>
     <p>website last generation : 10th January 2023 </p>
 </body>
