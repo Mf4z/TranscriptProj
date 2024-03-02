@@ -12,17 +12,37 @@
 
     <h3>Students</h3>
 
-    <ul>
-        {{students}}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <td>Email</td>
+                <td>First Name</td>
+                <td>Last Name</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in student_population %}
+            <tr>
+                <td>
+                    {{student[0]}}
+                </td>
+                <td>
+                    {{student[1]}}
+                </td>
+                <td>
+                    {{student[2]}}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-
-    <h3>Courses</h3>
+    <!-- <h3>Courses</h3>
     <ul>
         {{courses}}
     </ul>
 
-    <p>Website last generated: {{generation_time}}</p>
+    <p>Website last generated: {{generation_time}}</p> -->
 </body>
 
 </html>

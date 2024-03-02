@@ -12,13 +12,15 @@
 
     <h2>Active Populations</h2>
 
+    <a href="/populationss/2021/SPRING/ISM">Populations</a>
     <ul>
         {% for program_statistic in student_population %}
-        <li> <a href="poluations.html/?course={{ program_statistic[0]}}&year={{ program_statistic[2] }}">{{
+        <li> <a href="/populations/{{ program_statistic[2]}}/{{ program_statistic[1] }}/{{ program_statistic[0] }}">{{
                 program_statistic[0] }} -
                 {{ program_statistic[1] }} -
                 {{ program_statistic[2] }}
-                ({{ program_statistic[3] }})</li></a>
+                ({{ program_statistic[3] }})
+        </li></a>
         {% endfor %}
     </ul>
 
