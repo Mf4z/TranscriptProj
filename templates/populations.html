@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
+
     <title>Popluations</title>
 </head>
 
@@ -11,7 +14,6 @@
     <h2>Poulation - {{population}}</h2>
 
     <h3>Students</h3>
-
     <table>
         <thead>
             <tr>
@@ -38,11 +40,30 @@
     </table>
 
     <h3>Courses</h3>
-    <ul>
-        {% for course in programme_courses %}
-        <li>{{course[0]}}</li>
-        {% endfor %}
-    </ul>
+    <table>
+        <thead>
+            <tr>
+                <td>ID</td>
+                <td>Name</td>
+                <td>Sessions Count</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for course in programme_courses %}
+            <tr>
+                <td>
+                    {{course[0]}}
+                </td>
+                <td>
+                    {{course[1]}}
+                </td>
+                <td>
+                    {{course[2]}}
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
     <p>Website last generated: {{generation_time}}</p>
 </body>
