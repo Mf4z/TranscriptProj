@@ -17,6 +17,7 @@
     <table>
         <thead>
             <tr>
+                <td>Index</td>
                 <td>Email</td>
                 <td>First Name</td>
                 <td>Last Name</td>
@@ -26,6 +27,9 @@
         <tbody>
             {% for student in student_population %}
             <tr>
+                <td>
+                    {{ loop.index }}
+                </td>
                 <td>
                     {{student[0]}}
                 </td>
@@ -47,6 +51,7 @@
     <table>
         <thead>
             <tr>
+                <td>Index</td>
                 <td>ID</td>
                 <td>Name</td>
                 <td>Sessions Count</td>
@@ -55,6 +60,9 @@
         <tbody>
             {% for course in programme_courses %}
             <tr>
+                <td>
+                    {{ loop.index }}
+                </td>
                 <td>
                     {{course[0]}}
                 </td>
