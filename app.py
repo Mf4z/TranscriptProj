@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 import mysql.connector
-import datetime
+from datetime import datetime
 
 app = Flask(__name__)
 
@@ -21,10 +21,22 @@ def executeQuery(query):
     return result
 
 def currentDate():
-    current_date = datetime.date.today().strftime("%d %B %Y").replace("{:d}".format(datetime.date.today().day),
-                    "{:d}".format(datetime.date.today().day) + ("th" if 4 <= datetime.date.today().day % 100 <= 20 
-                                                                else {1: 'st', 2: 'nd', 3: 'rd'}.get(datetime.date.today().day % 10, "th")))
-    return current_date
+    # Current date
+    current_date = datetime.now()
+
+    # Remove leading zeros from day
+    day_without_zeros = current_date.strftime("%d").lstrip("0")
+
+    # Determine the ordinal suffix
+    if 10 <= int(day_without_zeros) % 100 <= 20:
+        suffix = "th"
+    else:
+        suffix = {1: "st", 2: "nd", 3: "rd"}.get(int(day_without_zeros) % 10, "th")
+
+    # Format the date
+    formatted_date = f"{day_without_zeros}{suffix} {current_date.strftime('%B')} {current_date.strftime('%Y')}"
+
+    return formatted_date
 
 @app.route('/')
 def index():
@@ -81,63 +93,49 @@ def index():
 @app.route('/populations/<int:year>/<batch>/<programme>')
 def populations(year, batch, programme):
     current_date = currentDate()
-    student_population_query = f"""SELECT s.student_epita_email,c.contact_first_name ,c.contact_last_name
-FROM students s 
-JOIN contacts c
-ON s.student_contact_ref = c.contact_email
-WHERE s.student_population_code_ref = '{programme}' 
-AND s.student_population_year_ref = {year} 
-AND s.student_population_period_ref = '{batch}'"""
     
     student_population_query = f"""SELECT s.student_epita_email,
-c.contact_first_name ,
-c.contact_last_name,
-COUNT(CASE WHEN g.grade_score  >= 10 THEN 1 END) as passed_grade,
-COUNT(*) AS classes
-FROM students s 
-JOIN contacts c
-ON s.student_contact_ref = c.contact_email
-JOIN grades g 
-ON g.grade_student_epita_email_ref = s.student_epita_email 
-GROUP BY 
-s.student_epita_email,
-s.student_population_code_ref,
-s.student_population_year_ref,
-s.student_population_period_ref
-HAVING  s.student_population_code_ref = '{programme}'
-AND s.student_population_year_ref = {year}
-AND s.student_population_period_ref = '{batch}'
-"""
-
-
-    query_courses = f"""
-    SELECT c.course_name  FROM programs p
-JOIN courses c 
-ON p.program_course_code_ref  = c.course_code
-WHERE p.program_assignment = '{programme}'"""
+    c.contact_first_name ,
+    c.contact_last_name,
+    COUNT(CASE WHEN g.grade_score  >= 10 THEN 1 END) as passed_grade,
+    COUNT(*) AS classes
+    FROM students s 
+    JOIN contacts c
+    ON s.student_contact_ref = c.contact_email
+    JOIN grades g 
+    ON g.grade_student_epita_email_ref = s.student_epita_email 
+    GROUP BY 
+    s.student_epita_email,
+    s.student_population_code_ref,
+    s.student_population_year_ref,
+    s.student_population_period_ref
+    HAVING  s.student_population_code_ref = '{programme}'
+    AND s.student_population_year_ref = {year}
+    AND s.student_population_period_ref = '{batch}'
+    """
     
     query_courses = f"""SELECT s.session_course_ref ,
-c.course_name,
-COUNT(s.session_course_ref ) AS session_count,
-p.program_assignment,
-s.session_population_year,
-s.session_population_period 
-FROM programs p
-JOIN courses c 
-ON p.program_course_code_ref  = c.course_code 
-JOIN sessions s  
-ON s.session_course_ref = c.course_code 
-GROUP BY 
-s.session_course_ref,
-p.program_assignment,
-c.course_name,
-s.session_population_year,
-s.session_population_period
-HAVING 
-p.program_assignment = '{programme}' AND
-s.session_population_year = {year} AND 
-s.session_population_period = '{batch}'
-"""
+    c.course_name,
+    COUNT(s.session_course_ref ) AS session_count,
+    p.program_assignment,
+    s.session_population_year,
+    s.session_population_period 
+    FROM programs p
+    JOIN courses c 
+    ON p.program_course_code_ref  = c.course_code 
+    JOIN sessions s  
+    ON s.session_course_ref = c.course_code 
+    GROUP BY 
+    s.session_course_ref,
+    p.program_assignment,
+    c.course_name,
+    s.session_population_year,
+    s.session_population_period
+    HAVING 
+    p.program_assignment = '{programme}' AND
+    s.session_population_year = {year} AND 
+    s.session_population_period = '{batch}'
+    """
 
     population = f"{programme} - {batch} - {year}"
     student_population = executeQuery(student_population_query)
@@ -150,8 +148,39 @@ s.session_population_period = '{batch}'
 
 @app.route('/student-grades/<int:year>/<batch>/<programme>/<student_id>')
 def student_grades(year, batch, programme,student_id):
+    student_records_query = f"""SELECT 
+    s.student_epita_email,
+    c.contact_first_name ,
+    c.contact_last_name,
+    crs.course_name,
+    AVG(g.grade_score) AS avg_score
+    FROM students s 
+    JOIN contacts c
+    ON s.student_contact_ref = c.contact_email
+    JOIN grades g 
+    ON g.grade_student_epita_email_ref = s.student_epita_email
+    JOIN courses crs
+    ON crs.course_code = g.grade_course_code_ref 
+    GROUP BY 
+    s.student_epita_email,
+    s.student_population_code_ref,
+    s.student_population_year_ref, 
+    s.student_population_period_ref,
+    g.grade_course_code_ref,
+    crs.course_name
+    HAVING
+    s.student_epita_email = '{student_id}'
+    AND s.student_population_code_ref = '{programme}'
+    AND s.student_population_year_ref = {year} 
+    AND s.student_population_period_ref = '{batch}'
+    """
+    current_date = currentDate()
+    population = f"{programme} - {batch} - {year}"
+    student_records = executeQuery(student_records_query)
+
     return render_template('student-grades.html',
-                           prog_year=year, prog_batch=batch, programme=programme)
+                           student_records=student_records,population=population,
+                           programme=programme,current_date=current_date)
 
 @app.route('/grades/<int:year>/<batch>/<programme>/<course_id>')
 def grades(year, batch, programme,course_id):
