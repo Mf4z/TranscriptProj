@@ -3,3 +3,8 @@ table, th, td {
     border-collapse: collapse;
     padding: 12px;
   }
+
+tr.clickable-row:hover {
+  cursor: pointer;
+  background-color: #f0f0f0;
+}

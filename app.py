@@ -144,7 +144,19 @@ s.session_population_period = '{batch}'
     programme_courses = executeQuery(query_courses)
 
     return render_template('populations.html',population=population,student_population=student_population,
-                           programme_courses=programme_courses,current_date = current_date)
+                           programme_courses=programme_courses,current_date = current_date,
+                           prog_year=year, prog_batch=batch, programme=programme)
+
+
+@app.route('/student-grades/<int:year>/<batch>/<programme>/<student_id>')
+def student_grades(year, batch, programme,student_id):
+    return render_template('student-grades.html',
+                           prog_year=year, prog_batch=batch, programme=programme)
+
+@app.route('/grades/<int:year>/<batch>/<programme>/<course_id>')
+def grades(year, batch, programme,course_id):
+    return render_template('grades.html',
+                           prog_year=year, prog_batch=batch, programme=programme)
 
 
 @app.route('/populationss/<int:year>/<batch>/<programme>')

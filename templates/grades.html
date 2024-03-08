@@ -21,13 +21,13 @@
                 <td>Email</td>
                 <td>First Name</td>
                 <td>Last Name</td>
+                <td>Course</td>
                 <td>Passed</td>
             </tr>
         </thead>
         <tbody>
             {% for student in student_population %}
-            <tr class="clickable-row"
-                data-href="/student-grades/{{ prog_year}}/{{ prog_batch }}/{{ programme }}/ {{ student[0]}}">
+            <a href="/grades/{{ program_statistic[2]}}/{{ program_statistic[1] }}/{{ program_statistic[0] }}/"></a><tr>
                 <td>
                     {{ loop.index }}
                 </td>
@@ -60,8 +60,7 @@
         </thead>
         <tbody>
             {% for course in programme_courses %}
-            <tr class="clickable-row"
-                data-href="/student-grades/{{ prog_year}}/{{ prog_batch }}/{{ programme }}/ {{ course[0]}}">
+            <tr>
                 <td>
                     {{ loop.index }}
                 </td>
@@ -83,16 +82,3 @@
 </body>
 
 </html>
-
-<script>
-    // Get all the clickable rows
-    const rows = document.querySelectorAll('.clickable-row');
-
-    // Add a click event listener to each row
-    rows.forEach(row => {
-        row.addEventListener('click', () => {
-            // Redirect to the URL specified in the data-href attribute
-            window.location.href = row.dataset.href;
-        });
-    });
-</script>
