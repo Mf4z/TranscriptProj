@@ -80,6 +80,7 @@ def index():
 
 @app.route('/populations/<int:year>/<batch>/<programme>')
 def populations(year, batch, programme):
+    current_date = currentDate()
     student_population_query = f"""SELECT s.student_epita_email,c.contact_first_name ,c.contact_last_name
 FROM students s 
 JOIN contacts c
@@ -87,6 +88,27 @@ ON s.student_contact_ref = c.contact_email
 WHERE s.student_population_code_ref = '{programme}' 
 AND s.student_population_year_ref = {year} 
 AND s.student_population_period_ref = '{batch}'"""
+    
+    student_population_query = f"""SELECT s.student_epita_email,
+c.contact_first_name ,
+c.contact_last_name,
+COUNT(CASE WHEN g.grade_score  >= 10 THEN 1 END) as passed_grade,
+COUNT(*) AS classes
+FROM students s 
+JOIN contacts c
+ON s.student_contact_ref = c.contact_email
+JOIN grades g 
+ON g.grade_student_epita_email_ref = s.student_epita_email 
+GROUP BY 
+s.student_epita_email,
+s.student_population_code_ref,
+s.student_population_year_ref,
+s.student_population_period_ref
+HAVING  s.student_population_code_ref = '{programme}'
+AND s.student_population_year_ref = {year}
+AND s.student_population_period_ref = '{batch}'
+"""
+
 
     query_courses = f"""
     SELECT c.course_name  FROM programs p
@@ -117,10 +139,12 @@ s.session_population_year = {year} AND
 s.session_population_period = '{batch}'
 """
 
+    population = f"{programme} - {batch} - {year}"
     student_population = executeQuery(student_population_query)
     programme_courses = executeQuery(query_courses)
 
-    return render_template('populations.html',student_population=student_population,programme_courses=programme_courses)
+    return render_template('populations.html',population=population,student_population=student_population,
+                           programme_courses=programme_courses,current_date = current_date)
 
 
 @app.route('/populationss/<int:year>/<batch>/<programme>')

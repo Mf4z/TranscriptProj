@@ -20,6 +20,7 @@
                 <td>Email</td>
                 <td>First Name</td>
                 <td>Last Name</td>
+                <td>Passed</td>
             </tr>
         </thead>
         <tbody>
@@ -33,6 +34,9 @@
                 </td>
                 <td>
                     {{student[2]}}
+                </td>
+                <td>
+                    {{student[3]}}/{{student[4]}}
                 </td>
             </tr>
             {% endfor %}
@@ -64,8 +68,8 @@
             {% endfor %}
         </tbody>
     </table>
-
-    <p>Website last generated: {{generation_time}}</p>
+    <br>
+    <p>Website last generation : {{current_date}} </p>
 </body>
 
 </html>
