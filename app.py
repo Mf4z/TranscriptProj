@@ -22,12 +22,50 @@ def executeQuery(query):
 @app.route('/')
 def index():
     query_population = """
-    SELECT student_population_code_ref,student_population_period_ref,student_population_year_ref, count(*) AS population FROM students
-    GROUP BY student_population_code_ref,student_population_period_ref,student_population_year_ref ORDER BY student_population_code_ref"""
-
+    SELECT
+    student_population_code_ref,
+    student_population_period_ref,
+    student_population_year_ref,
+    COUNT(*) AS population 
+    FROM students
+    GROUP BY 
+    student_population_code_ref,
+    student_population_period_ref,
+    student_population_year_ref 
+    ORDER BY 
+    student_population_code_ref
+    """
+    
+    query_present_population ="""
+    SELECT 
+    COUNT(*) AS total_attendance,
+    SUM(CASE WHEN a.attendance_presence = 1 THEN 1 ELSE 0 END) AS total_present,
+    s.student_population_period_ref,
+    s.student_population_year_ref,
+    s.student_population_code_ref
+    FROM 
+    students s
+    JOIN attendance a 
+    ON s.student_epita_email = a.attendance_student_ref
+    GROUP BY 
+    s.student_population_period_ref,
+    s.student_population_year_ref,
+    s.student_population_code_ref
+    ORDER BY 
+    s.student_population_code_ref,
+    s.student_population_year_ref;
+    """
     student_population = executeQuery(query_population)
+    population_percentage = executeQuery(query_present_population)
 
-    return render_template('index.html',student_population=student_population)
+    data_with_percentage = []
+    for row in population_percentage:
+        total_attendance = row[0]
+        total_present = row[1]
+        percentage =float(total_present * 100) / total_attendance
+        data_with_percentage.append((total_attendance, total_present, percentage, row[2], row[3], row[4]))
+    
+    return render_template('index.html',student_population=student_population,population_percentage=data_with_percentage)
 
 
 @app.route('/populations/<int:year>/<batch>/<programme>')
@@ -35,7 +73,10 @@ def populations(year, batch, programme):
     student_population_query = f"""SELECT s.student_epita_email,c.contact_first_name ,c.contact_last_name
 FROM students s 
 JOIN contacts c
-ON s.student_contact_ref = c.contact_email WHERE s.student_population_code_ref = '{programme}' AND s.student_population_year_ref = {year} AND s.student_population_period_ref = '{batch}'"""
+ON s.student_contact_ref = c.contact_email
+WHERE s.student_population_code_ref = '{programme}' 
+AND s.student_population_year_ref = {year} 
+AND s.student_population_period_ref = '{batch}'"""
 
     query_courses = f"""
     SELECT c.course_name  FROM programs p
