@@ -1,5 +1,6 @@
 from flask import Flask, render_template
 import mysql.connector
+import datetime
 
 app = Flask(__name__)
 
@@ -19,8 +20,15 @@ def executeQuery(query):
     # mydb.close()
     return result
 
+def currentDate():
+    current_date = datetime.date.today().strftime("%d %B %Y").replace("{:d}".format(datetime.date.today().day),
+                    "{:d}".format(datetime.date.today().day) + ("th" if 4 <= datetime.date.today().day % 100 <= 20 
+                                                                else {1: 'st', 2: 'nd', 3: 'rd'}.get(datetime.date.today().day % 10, "th")))
+    return current_date
+
 @app.route('/')
 def index():
+    user_name = "Admin"
     query_population = """
     SELECT
     student_population_code_ref,
@@ -57,6 +65,7 @@ def index():
     """
     student_population = executeQuery(query_population)
     population_percentage = executeQuery(query_present_population)
+    current_date = currentDate()
 
     data_with_percentage = []
     for row in population_percentage:
@@ -65,7 +74,8 @@ def index():
         percentage =float(total_present * 100) / total_attendance
         data_with_percentage.append((total_attendance, total_present, percentage, row[2], row[3], row[4]))
     
-    return render_template('index.html',student_population=student_population,population_percentage=data_with_percentage)
+    return render_template('index.html',student_population=student_population,
+                           population_percentage=data_with_percentage,current_date=current_date,user_name=user_name)
 
 
 @app.route('/populations/<int:year>/<batch>/<programme>')

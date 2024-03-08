@@ -31,13 +31,13 @@
             {{program_statistic[5] }} -
             {{ program_statistic[3] }} -
             {{ program_statistic[4] }}
-            ({{ '%.2f' %program_statistic[2]}})
+            ({{ '%.0f' %program_statistic[2]}}%)
         </li>
         {% endfor %}
     </ul>
 
     <br>
-    <p>website last generation : 10th January 2023 </p>
+    <p>Website last generation : {{current_date}} </p>
 </body>
 
 </html>
