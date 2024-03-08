@@ -184,21 +184,38 @@ def student_grades(year, batch, programme,student_id):
 
 @app.route('/grades/<int:year>/<batch>/<programme>/<course_id>')
 def grades(year, batch, programme,course_id):
-    return render_template('grades.html',
-                           prog_year=year, prog_batch=batch, programme=programme)
-
-
-@app.route('/populationss/<int:year>/<batch>/<programme>')
-def populationss(year, batch, programme):
-    test_query = f"SELECT * FROM students WHERE student_population_year_ref = {year} AND student_population_period_ref = '{batch}' AND student_population_code_ref = '{programme}'"
-    student_population_query = f"""SELECT s.student_epita_email,c.contact_first_name ,c.contact_last_name
-FROM students s 
-JOIN contacts c
-ON s.student_contact_ref = c.contact_email WHERE s.student_population_code_ref = '{programme}' AND s.student_population_year_ref = {year} AND s.student_population_period_ref = '{batch}'"""
-    
-    cour
-    student_population = executeQuery(student_population_query)
-    return render_template('populations.html',student_population=student_population)
+    course_record_query = f"""SELECT 
+    s.student_epita_email,
+    c.contact_first_name ,
+    c.contact_last_name,
+    crs.course_name,
+    AVG(g.grade_score) AS avg_score
+    FROM students s 
+    JOIN contacts c
+    ON s.student_contact_ref = c.contact_email
+    JOIN grades g 
+    ON g.grade_student_epita_email_ref = s.student_epita_email
+    JOIN courses crs
+    ON crs.course_code = g.grade_course_code_ref 
+    GROUP BY 
+    s.student_epita_email,
+    s.student_population_code_ref,
+    s.student_population_year_ref, 
+    s.student_population_period_ref,
+    g.grade_course_code_ref,
+    crs.course_name
+    HAVING 
+    s.student_population_code_ref = '{programme}'
+    AND s.student_population_year_ref = {year} 
+    AND s.student_population_period_ref = '{batch}'
+    AND g.grade_course_code_ref = '{course_id}'    
+    """
+    current_date = currentDate()
+    population = f"{programme} - {batch} - {year}"
+    course_records = executeQuery(course_record_query)
+    return render_template('grades.html',course_records=course_records,
+                           current_date=current_date,population=population,
+                           programme=programme)
 
 if __name__ == '__main__':
     app.run(debug=True)

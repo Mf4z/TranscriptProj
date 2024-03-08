@@ -4,16 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='main.css') }}">
-
-    <title>Popluations</title>
+    <title>Final Grades</title>
 </head>
 
 <body>
-    <h2>Poulation - {{population}}</h2>
+    <h2>Grades - {{population}}</h2>
 
-    <h3>Students</h3>
+    <h3>Student's final grades per course</h3>
     <table>
         <thead>
             <tr>
@@ -22,56 +20,29 @@
                 <td>First Name</td>
                 <td>Last Name</td>
                 <td>Course</td>
-                <td>Passed</td>
+                <td>Grade(/20)</td>
             </tr>
         </thead>
         <tbody>
-            {% for student in student_population %}
-            <a href="/grades/{{ program_statistic[2]}}/{{ program_statistic[1] }}/{{ program_statistic[0] }}/"></a><tr>
-                <td>
-                    {{ loop.index }}
-                </td>
-                <td>
-                    {{student[0]}}
-                </td>
-                <td>
-                    {{student[1]}}
-                </td>
-                <td>
-                    {{student[2]}}
-                </td>
-                <td>
-                    {{student[3]}}/{{student[4]}}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <h3>Courses</h3>
-    <table>
-        <thead>
-            <tr>
-                <td>Index</td>
-                <td>ID</td>
-                <td>Name</td>
-                <td>Sessions Count</td>
-            </tr>
-        </thead>
-        <tbody>
-            {% for course in programme_courses %}
+            {% for course_record in course_records %}
             <tr>
                 <td>
                     {{ loop.index }}
                 </td>
                 <td>
-                    {{course[0]}}
+                    {{course_record[0]}}
                 </td>
                 <td>
-                    {{course[1]}}
+                    {{course_record[1]}}
                 </td>
                 <td>
-                    {{course[2]}}
+                    {{course_record[2]}}
+                </td>
+                <td>
+                    {{course_record[3]}}
+                </td>
+                <td>
+                    {{'%.1f' %course_record[4]}}
                 </td>
             </tr>
             {% endfor %}
