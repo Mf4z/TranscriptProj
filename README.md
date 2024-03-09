@@ -7,6 +7,9 @@ This project is to show a proof of concept for the transcript system in EPITA.
 
 It is meant to show statistics of students, their population, grades and relevant information.
 
+## EPITA Transcript Project Demo 
+<img src="images/transcript_proj.gif" height=500px alt="transcript-project"/>
+
 
 1. **Initialize and activate a virtualenv using:**
 ```
