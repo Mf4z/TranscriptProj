@@ -16,8 +16,7 @@ def executeQuery(query):
     cursor.execute(query)
 
     result = cursor.fetchall()
-    # cursor.close()
-    # mydb.close()
+    cursor.close()
     return result
 
 def currentDate():
@@ -77,6 +76,7 @@ def index():
     """
     student_population = executeQuery(query_population)
     population_percentage = executeQuery(query_present_population)
+    
     current_date = currentDate()
 
     data_with_percentage = []
@@ -87,7 +87,8 @@ def index():
         data_with_percentage.append((total_attendance, total_present, percentage, row[2], row[3], row[4]))
     
     return render_template('index.html',student_population=student_population,
-                           population_percentage=data_with_percentage,current_date=current_date,user_name=user_name)
+                           population_percentage=data_with_percentage,
+                           current_date=current_date,user_name=user_name)
 
 
 @app.route('/populations/<int:year>/<batch>/<programme>')
@@ -141,7 +142,8 @@ def populations(year, batch, programme):
     student_population = executeQuery(student_population_query)
     programme_courses = executeQuery(query_courses)
 
-    return render_template('populations.html',population=population,student_population=student_population,
+    return render_template('populations.html',population=population,
+                           student_population=student_population,
                            programme_courses=programme_courses,current_date = current_date,
                            prog_year=year, prog_batch=batch, programme=programme)
 
@@ -179,7 +181,8 @@ def student_grades(year, batch, programme,student_id):
     student_records = executeQuery(student_records_query)
 
     return render_template('student-grades.html',
-                           student_records=student_records,population=population,
+                           student_records=student_records,
+                           population=population,
                            programme=programme,current_date=current_date)
 
 @app.route('/grades/<int:year>/<batch>/<programme>/<course_id>')
@@ -213,6 +216,7 @@ def grades(year, batch, programme,course_id):
     current_date = currentDate()
     population = f"{programme} - {batch} - {year}"
     course_records = executeQuery(course_record_query)
+    
     return render_template('grades.html',course_records=course_records,
                            current_date=current_date,population=population,
                            programme=programme)
